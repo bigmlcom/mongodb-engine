@@ -4,6 +4,8 @@ import decimal
 import sys
 import warnings
 
+from future.utils import raise_
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.backends.signals import connection_created
@@ -62,8 +64,6 @@ class DatabaseOperations(NonrelDatabaseOperations):
         drop all `tables`. No SQL in MongoDB, so just clear all tables
         here and return an empty list.
         """
-
-
 
         for table in tables:
             if table.startswith('system.'):
@@ -269,7 +269,7 @@ class DatabaseWrapper(NonrelDatabaseWrapper):
             self.database = self.connection[db_name]
         except TypeError:
             exc_info = sys.exc_info()
-            raise ImproperlyConfigured, exc_info[1], exc_info[2]
+            raise_(ImproperlyConfigured, exc_info[1], exc_info[2])
 
         if user and password:
             if not self.database.authenticate(user, password):

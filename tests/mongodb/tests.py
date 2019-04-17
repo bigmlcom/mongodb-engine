@@ -242,7 +242,7 @@ class DatabaseOptionTests(TestCase):
                 ]:
                     cls_code.append('    ' + line % name)
 
-            exec '\n'.join(cls_code) in locals()
+            exec ('\n'.join(cls_code) in locals())
 
             options = {'OPTIONS': {'OPERATIONS': flags}}
             with self.custom_database_wrapper(options, collection_class=Collection):

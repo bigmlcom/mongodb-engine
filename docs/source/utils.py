@@ -11,6 +11,6 @@ def get_git_head():
         return check_output(['git', 'rev-parse', 'HEAD'])
     except CalledProcessError:
         pass
-    except OSError, exc:
+    except OSError as exc:
         if exc.errno != 2:
             raise

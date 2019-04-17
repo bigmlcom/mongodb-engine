@@ -2,6 +2,8 @@ from functools import wraps
 import re
 import sys
 
+from future.utils import raise_
+
 import django
 from django.db.models import F, NOT_PROVIDED
 from django.db.models.sql import aggregates as sqlaggregates
@@ -80,12 +82,14 @@ NEGATED_OPERATORS_MAP = {
 def safe_call(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
+        traceback = sys.exc_info()[2]
         try:
             return func(*args, **kwargs)
-        except DuplicateKeyError, e:
-            raise IntegrityError, IntegrityError(smart_str(e)), sys.exc_info()[2]
-        except PyMongoError, e:
-            raise DatabaseError, DatabaseError(smart_str(e)), sys.exc_info()[2]
+        except DuplicateKeyError as e:
+            raise_(IntegrityError, IntegrityError(smart_str(e)), traceback)
+        except PyMongoError as e:
+            raise_(DatabaseError, DatabaseError(smart_str(e)), traceback)
+
     return wrapper
 
 
